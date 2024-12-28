@@ -1,0 +1,38 @@
+---
+variant: flatcar
+version: 1.1.0
+systemd:
+  units:
+    - name: installer.service
+      enabled: true
+      contents: |
+        [Unit]
+        Requires=network-online.target
+        After=network-online.target
+        [Service]
+        Type=simple
+        ExecStart=/opt/installer
+        [Install]
+        WantedBy=multi-user.target
+storage:
+  files:
+    - path: /opt/installer
+      mode: 0500
+      contents:
+        inline: |
+          #!/bin/bash -ex
+          curl --retry 10 --fail "http://matchbox.example.com:8080/ignition?os=installed" -o ignition.json
+          flatcar-install \
+            -d /dev/vda \
+            -C stable \
+            -V 3227.2.0 \
+            -b http://matchbox.example.com:8080/assets/flatcar \
+            -i ignition.json
+          udevadm settle
+          systemctl reboot
+
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - ssh-ed25519 SET_PUBKEY_HERE

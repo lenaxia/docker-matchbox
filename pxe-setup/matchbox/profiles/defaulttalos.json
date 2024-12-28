@@ -1,0 +1,17 @@
+{
+  "id": "defaulttalos",
+  "name": "Default Talos",
+  "boot": {
+    "kernel": "/assets/talos-v1.9.1/amd64/vmlinuz",
+    "initrd": ["/assets/talos-v1.9.1/amd64/initramfs.xz"],
+    "args": [
+      "initrd=initramfs.xz",
+      "init_on_alloc=1",
+      "slab_nomerge",
+      "pti=on",
+      "console=tty0",
+      "printk.devkmsg=on",
+      "talos.platform=metal"
+    ]
+  }
+}

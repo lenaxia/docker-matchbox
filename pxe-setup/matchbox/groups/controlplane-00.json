@@ -1,0 +1,8 @@
+{
+  "id": "controlplane00",
+  "name": "Control Plane 00",
+  "profile": "controlplane00",
+  "selector": {
+    "mac": "00:e0:4c:68:00:8e"
+  }
+}

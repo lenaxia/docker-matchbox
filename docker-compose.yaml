@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  dnsmasq:
+    image: "jpillora/dnsmasq" # Lightweight dnsmasq Docker image
+    container_name: dnsmasq
+      #ports:
+      #  - "68:67/udp"    # DHCP port
+      #  - "70:69/udp"    # TFTP port
+      #  - "8080:8080"    # HTTP for serving iPXE binaries (optional)
+    network_mode: host
+    volumes:
+      - ./pxe-setup/dnsmasq/dnsmasq.conf:/etc/dnsmasq.conf:ro
+      - ./pxe-setup/tftpboot:/var/lib/tftpboot:Z
+    restart: unless-stopped
+      #    networks:
+      #      pxe-network:
+      #        ipv4_address: 192.168.1.10 # Static IP for dnsmasq
+
+  matchbox:
+    image: "quay.io/poseidon/matchbox:latest"
+    container_name: matchbox
+    environment:
+      - MATCHBOX_ADDRESS=0.0.0.0:8080
+      - MATCHBOX_LOG_LEVEL=debug
+        #- MATCHBOX_RPC_ADDRESS=0.0.0.0:8081
+    ports:
+      - "8081:8080"  # Matchbox API and file serving
+      - "8082:8081"  # Matchbox gRPC (optional)
+    volumes:
+      - ./pxe-setup/matchbox:/var/lib/matchbox:ro  # Matchbox assets and configs
+    restart: unless-stopped
+      #    networks:
+      #      pxe-network:
+      #        ipv4_address: 192.168.1.20 # Static IP for Matchbox
+
+      #networks:
+      #  pxe-network:
+      #    ipam:
+      #      config:
+      #        - subnet: 192.168.1.0/24
+

@@ -1,0 +1,8 @@
+{
+  "id": "k3sworker02",
+  "name": "k3sworker02",
+  "profile": "defaulttalos",
+  "selector": {
+    "mac": "00:e0:4c:68:00:0e"
+  }
+}

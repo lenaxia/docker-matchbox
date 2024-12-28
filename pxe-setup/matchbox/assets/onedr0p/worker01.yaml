@@ -1,0 +1,108 @@
+version: v1alpha1
+debug: false
+persist: true
+machine:
+  type: worker
+  token: i5s0x4.43qasrltrfgzsxmr
+  ca:
+    crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJQakNCOGFBREFnRUNBaEE5VDdDaXl0NVZQOFh3Wi9oMTEzcitNQVVHQXl0bGNEQVFNUTR3REFZRFZRUUsKRXdWMFlXeHZjekFlRncweU5ERXlNVGd5TWpNek1qTmFGdzB6TkRFeU1UWXlNak16TWpOYU1CQXhEakFNQmdOVgpCQW9UQlhSaGJHOXpNQ293QlFZREsyVndBeUVBTjJUMTZ2RWlXQTQrUnVDbHkwNGpLVkhSalhKSTNqcXE5by9XClQ5dmtyd3FqWVRCZk1BNEdBMVVkRHdFQi93UUVBd0lDaERBZEJnTlZIU1VFRmpBVUJnZ3JCZ0VGQlFjREFRWUkKS3dZQkJRVUhBd0l3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFkQmdOVkhRNEVGZ1FVMWxxV1dGa2dJcVNYejFQQwpkWjRTTm96U0lhZ3dCUVlESzJWd0EwRUFXM3VDVXdQaU1QZVBXaDMwWlQwUmFnVkp0UTZWU3FtU1M1ZTVEd2I1Cm1vOWFSQ2JZbEQxMDNsSG9jMTM5bjJ0UDg4bjdJdGZnTDZVVGh4UWpjS0JnQUE9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    key: ""
+  certSANs:
+    - 192.168.3.130
+    - 127.0.0.1
+  kubelet:
+    image: ghcr.io/siderolabs/kubelet:v1.32.0
+    extraArgs:
+      rotate-server-certificates: "true"
+    extraMounts:
+      - destination: /var/openebs/local
+        type: bind
+        source: /var/openebs/local
+        options:
+          - bind
+          - rshared
+          - rw
+    defaultRuntimeSeccompProfileEnabled: true
+    nodeIP:
+      validSubnets:
+        - 192.168.0.0/16
+    disableManifestsDirectory: true
+  network:
+    hostname: talos-dev-worker-01
+    interfaces:
+      - deviceSelector:
+          hardwareAddr: bc:24:11:05:93:87
+        addresses:
+          - 192.168.3.121/16
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 192.168.0.1
+        mtu: 1500
+        dhcp: false
+    nameservers:
+      - 192.168.0.5
+    disableSearchDomain: true
+  install:
+    disk: /dev/sda
+    image: ghcr.io/siderolabs/installer:v1.9.0
+    wipe: false
+  files:
+    - content: |-
+        [plugins."io.containerd.grpc.v1.cri"]
+          enable_unprivileged_ports = true
+          enable_unprivileged_icmp = true
+        [plugins."io.containerd.grpc.v1.cri".containerd]
+          discard_unpacked_layers = false
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+          discard_unpacked_layers = false
+      permissions: 0o0
+      path: /etc/cri/conf.d/20-customization.part
+      op: create
+  time:
+    disabled: false
+    servers:
+      - 162.159.200.1
+      - 162.159.200.123
+        #  sysctls:
+        #    fs.inotify.max_user_instances: "8192"
+        #    fs.inotify.max_user_watches: "1048576"
+        #    net.core.rmem_max: "7500000"
+        #    net.core.wmem_max: "7500000"
+        #    vm.nr_hugepages: "1024"
+  features:
+    rbac: true
+    stableHostname: true
+    apidCheckExtKeyUsage: true
+    diskQuotaSupport: true
+    kubePrism:
+      enabled: true
+      port: 7445
+    hostDNS:
+      enabled: true
+      forwardKubeDNSToHost: true
+      resolveMemberNames: true
+cluster:
+  id: LrHPiJAanTysP65rjdufoxiU4RcfJe9LAbaCpi76mRU=
+  secret: HCbA4Ud7c4HPL20G7Np42P03MwePQ2XVx7sU8nI1ZGU=
+  controlPlane:
+    endpoint: https://192.168.3.130:6443
+  clusterName: talos-ops-dev
+  network:
+    cni:
+      name: none
+    dnsDomain: cluster.local
+    podSubnets:
+      - 10.69.0.0/16
+    serviceSubnets:
+      - 10.96.0.0/16
+  token: qxu71q.t1fo28sarnsmbayo
+  ca:
+    crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJpakNDQVRDZ0F3SUJBZ0lSQUpvQnhUSG5oQnprc0xJSEZ4a0VkVlV3Q2dZSUtvWkl6ajBFQXdJd0ZURVQKTUJFR0ExVUVDaE1LYTNWaVpYSnVaWFJsY3pBZUZ3MHlOREV5TVRneU1qTXpNVGhhRncwek5ERXlNVFl5TWpNegpNVGhhTUJVeEV6QVJCZ05WQkFvVENtdDFZbVZ5Ym1WMFpYTXdXVEFUQmdjcWhrak9QUUlCQmdncWhrak9QUU1CCkJ3TkNBQVRMYUMvT3Q3NHAwamt3SDFCL2hFd3hIK2d6SThYR25pODl5SDdKZG9rMDZaTmVWZ3laZjI0aXMvc2oKRlc4K21GNUg1azdzVkFpVmYyb2RBc0Z0ZVZuOW8yRXdYekFPQmdOVkhROEJBZjhFQkFNQ0FvUXdIUVlEVlIwbApCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01BOEdBMVVkRXdFQi93UUZNQU1CQWY4d0hRWURWUjBPCkJCWUVGSFVSVWVpRzA2eXhkNDREZ2lxOVROMW41VXFoTUFvR0NDcUdTTTQ5QkFNQ0EwZ0FNRVVDSVFESGJnQWoKTzUyTFZNK0ZuamNiR0xNYzVLanVVQVY3M21jblVrM0xrTENTNHdJZ2ZidzJ1M2NPZ0hmNktRT1RjUlFSNnNFOApybCtFSlBzMWl6ZzhqWXBud044PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    key: ""
+  discovery:
+    enabled: true
+    registries:
+      kubernetes:
+        disabled: false
+      service:
+        disabled: true

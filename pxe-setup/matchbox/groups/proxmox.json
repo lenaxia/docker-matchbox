@@ -1,0 +1,8 @@
+{
+  "id": "proxmox",
+  "name": "proxmox",
+  "profile": "defaulttalos",
+  "selector": {
+    "mac": "bc:24:11:05:93:87"
+  }
+}

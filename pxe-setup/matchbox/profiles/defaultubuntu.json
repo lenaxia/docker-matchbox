@@ -1,0 +1,15 @@
+{
+  "id": "default-ubuntu",
+  "name": "Ubuntu Server - Noble",
+  "boot": {
+    "kernel": "/assets/ubuntu-noble/amd64/linux",
+    "initrd": ["/assets/ubuntu-noble/amd64/initrd"],
+    "args": [
+      "initrd=initrd",
+      "root=/dev/ram0",
+      "ramdisk_size=1500000",
+      "ip=dhcp",
+      "url=https://releases.ubuntu.com/noble/ubuntu-24.04.1-live-server-amd64.iso"
+    ]
+  }
+}
